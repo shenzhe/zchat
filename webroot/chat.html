@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="./static/js/jquery.min.js"></script>
+        <script type="text/javascript" src="http://www.swoole.com/static/js/swfobject.js"></script>
+        <script type="text/javascript" src="./static/js/chat.js"></script>
+    </head>
+    <body>
+        <div><h1>泽泽聊天室</h1></div>
+        <div id="login" style="display: none;">
+            用户名：<input type="text" id="username"/>
+            <input type="button" value="进入聊天室" onclick="loginchat();"/>
+        </div>
+        <div id="chatcontent" style="display: none;">
+
+            <div style="float: left; width: 80%;" id="msglist"></div>
+            <div style="float: left; width: 18%;" id="pleft">
+                在线列表
+            </div>
+            <div style="clear: both;">
+                <input type="text" id="msgcontent" /> <input type="button" value="发言" onclick="sendmsg();"/>
+            </div>
+        </div>
+        <div id="flashcontainer" style="visibility:hidden"></div>
+        <script type="text/javascript">
+            function querystring(item) {
+                var svalue = location.search.match(new RegExp("[\?\&]" + item + "=([^\&]*)(\&?)","i"));
+                return svalue ? svalue[1] : svalue;
+            }
+
+            function loginchat() {
+                var username = $.trim($("#username").val());
+                if(username) {
+                    location.href = location.href += '?username='+username;
+                } else {
+                    alert('请输入用户名')
+                }
+            }
+            var uname = querystring('username');
+            if(uname) {
+                $("#chatcontent").css('display', '');
+                $("#login").css('display', 'none');
+                initChatClient();
+            } else {
+                $("#chatcontent").css('display', 'none');
+                $("#login").css('display', '');
+            }
+        </script>
+    </body>
+</html>
