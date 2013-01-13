@@ -99,9 +99,10 @@ function recvmsg(msg) {
             init_userlist();
         }else if('userloginout' == data.type) {
             sysinfo('[系统提示] '+data.name+'退出的聊天室<br />');
+            $("#"+data.from).remove();
             var uid = data.from;
             delete(users[uid]);
-            $("#"+data.from).remove();
+            
         }else if('newuser' == data.type) {
             sysinfo('[系统提示] '+data.name+'来到了聊天室<br />');
             var uid = data.from;
