@@ -11,7 +11,7 @@ use common,
  * @package       UserCtrl
  * @subpackage    CtrlBase
  */
-class ChatCtrl extends CtrlBase
+class ChatCtrl
 {
 
     private $names = [];

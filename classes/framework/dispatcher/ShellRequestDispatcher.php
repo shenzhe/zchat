@@ -11,6 +11,7 @@ class ShellRequestDispatcher extends RequestDispatcherBase {
 
     private $ctrlClassName;
     private $ctrlMethodName;
+    private $daemon = false;
 
     public function __construct() {
         $this->defaultAction = 'Shell.main';

@@ -19,9 +19,9 @@ zchat 是用zphp实现的一个完整的聊天室demo
 运行： 
 ========================
 
-    cd到程序目录
+    cd到 webroot目录
 
-    执行： php webroot/index.php Chat.start (可以加 -d ，以damon方式运行)
+    执行： php index.php Chat.start (可以加 -d ，以damon方式运行)
 
     浏览器打开： http://host/chat.html
 
