@@ -15,6 +15,8 @@ zchat 是用zphp实现的一个完整的聊天室demo
 
     libevent：https://github.com/shenzhe/php-libevent
 
+    zphp: https://github.com/shenzhe/zphp
+
     
 运行： 
 ========================
