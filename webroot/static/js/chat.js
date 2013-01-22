@@ -56,12 +56,15 @@ var socket = {
  * 
  * @return
  */
-function initChatClient() {
+function initChatClient(ip, port) {
     var so = new SWFObject("./static/js/socket_bridge.swf", "socketBridge",
             "1", "1", "9", "#ffffff");
     so.addParam("allowscriptaccess", "always");
     so.addVariable("scope", "socket");
     so.write(socket.config.flashcontainer);
+    socket.config.ip = ip;
+    socket.config.port = port;
+
 }
 /**
  * 插入屏幕
