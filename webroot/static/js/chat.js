@@ -1,7 +1,7 @@
 var users;
 var socket = {
     config : {
-        ip :"chat.vpn.yilekongjian.com",
+        ip :"127.0.0.1",
         port :8991,
         flashcontainer :"flashcontainer",
         auto :true
