@@ -1,167 +1,211 @@
-var users;
-var socket = {
-    config : {
-        ip :"127.0.0.1",
-        port :8991,
-        flashcontainer :"flashcontainer",
-        auto :true
-    },
-    connect : function() {
-        socket.flash.log("begin connect to session server");
-        sysinfo("[系统提示] 正在连接聊天室服务器...<br />");
-        socket.flash.connect(socket.config.ip, socket.config.port);
-    },
-    send : function(msg) {
-        if (socket.isConnected >= 1) {
-            socket.flash.send(msg);
+var chatClient = {
+	host : '127.0.0.1',
+	port : 8991,
+	socket : null,
+    uinfo: {},
+    renum: 2,
+    hb : 0,
+	cb: {
+		connect: function(success, data){
+			console.log("server connect, success:"+success+" data:"+data);
+		},
+		send: function(data){
+			console.log("send data"+data)
+		},
+		receive: function(data){
+			console.log("receive data"+data)
+		},
+		close: function(){
+            this.connected = 0;
+			console.log("server close");
+		}
+	},
+	connected: 0,
+	init : function(host, port, target, swf) {
+		this.host = host;
+		this.port = port;
+		this.socket = new jSocket(this.ready, this.connect,
+		this.receive, this.close);
+		this.socket.setup(target, swf);
+		
+	},
+	ready: function() {
+		chatClient.socket.connect(chatClient.host, chatClient.port);
+	},
+
+    retry: function() {
+        if(this.renum < 1) {
+            return 0;
         }
+        this.ready();
+        this.renum--;
+        return 1;
     },
-    loaded : function() {
-        socket.flash = document.getElementById("socketBridge");
-        socket.isConnected = 0;
-        if (socket.config.auto) {
-            socket.connect();
+
+	connect: function(success, data) {
+		return chatClient.cb.connect.call(this, success, data);
+	},
+
+	send: function(data) {
+		this.socket.write(data);
+		return this.cb.send.call(this, data);
+	},
+
+	receive: function(content) {
+		return chatClient.cb.receive.call(this, content);
+	},
+
+	close: function() {
+		return chatClient.cb.close.call(this);
+	},
+
+    selfClose: function() {
+        chatClient.socket.close();
+        $("#sendBtn").attr('disabled', 'disabled');
+        chatClient.connected = 0;
+        chatClient.clearhb();
+    },
+
+    heartbeat: function(seconds) {
+        chatClient.hb = window.setInterval(function(){chatClient.send(JSON.stringify([7, {}]));}, seconds * 1000);
+    },
+
+    clearhb: function() {
+        if(chatClient.hb) {
+            window.clearInterval(chatClient.hb);
+            chatClient.hb = 0;
         }
-    },
-    connected : function() {
-        socket.isConnected = 1;
-        socket.flash.log("connected to session server");
-        socket.flash.send('setname||' + uname);
-        sysinfo("[系统提示] 已连接到服务器，正在初始化帐户...<br />");
-    },
-    close : function() {
-        socket.flash.close();
-        socket.isConnected = 0;
-        socket.flash.log("close connection");
-    },
-    disconnected : function() {
-        socket.isConnected = 0;
-        socket.flash.log("disconnected");
-    },
-    ioError : function(msg) {
-        socket.flash.log(msg);
-        socket.isConnected = 0;
-    },
-    securityError : function(msg) {
-        socket.flash.log(msg);
-        socket.isConnected = 0;
-    },
-    receive : function(msg) {
-        socket.flash.log("receive from server:" + msg);
-        recvmsg(msg);
     }
 };
-/**
- * 初始化聊天室
- * 
- * @return
- */
-function initChatClient(ip, port) {
-    var so = new SWFObject("./static/js/socket_bridge.swf", "socketBridge",
-            "1", "1", "9", "#ffffff");
-    so.addParam("allowscriptaccess", "always");
-    so.addVariable("scope", "socket");
-    so.write(socket.config.flashcontainer);
-    socket.config.ip = ip;
-    socket.config.port = port;
 
+function hiddenChat(_obj, hidden) {
+    if(typeof(_obj) == 'string') {
+        obj = document.getElementById(_obj);
+    } else {
+        obj = _obj;
+    }
+    hidden = hidden || false;
+    if (hidden || obj.value == '隐') {
+        $("#chat").css("top", 670);
+        $("#chat").height('50');
+        $("#chat_content").height('25');
+        obj.value = '开';
+    } else {
+        $("#chat").css("top", 520);
+        $("#chat").height('200');
+        $("#chat_content").height('175');
+        obj.value = '隐';
+    }
+    var obj = document.getElementById('chat_content');
+    obj.scrollTop = obj.scrollHeight;
 }
-/**
- * 插入屏幕
- * 
- * @param msg
- * @return
- */
-function sysinfo(msg) {
-    jQuery('#msglist').append(msg);
+
+function checkScroll() {
+    var obj = document.getElementById('chat_content');
+    obj.scrollTop= obj.scrollHeight;
 }
-/**
- * 接收到消息的回调函数
- * 
- * @param msg
- * @return
- */
-function recvmsg(msg) {
-    msg = decodeURIComponent(msg);
-    var txt = '';
-    var now = new Date;
-    var ntime = now.getHours() + ':' + now.getMinutes() + ':'
-            + now.getSeconds();
-    if ("loginsuccess" == msg) {
-        sysinfo('[系统提示] 登录成功！<br />');
-        socket.flash.send('getusers');
-        sysinfo('[系统提示] 正在获取已登录用户信息...<br />');
-    } else if ("userexists" == msg) {
-        socket.close();
-        sysinfo('[系统提示] 您已登录，请不要重复登陆！<br />');
-    }else {
-        var data = eval('(' + msg + ')');
-        if('userlist' == data.type) {
-            sysinfo('[系统提示] 获取成功！<br />');
-            users = data.userlist;
-            init_userlist();
-        }else if('userloginout' == data.type) {
-            sysinfo('[系统提示] '+data.name+'退出的聊天室<br />');
-            $("#"+data.from).remove();
-            var uid = data.from;
-            delete(users[uid]);
-            
-        }else if('newuser' == data.type) {
-            sysinfo('[系统提示] '+data.name+'来到了聊天室<br />');
-            var uid = data.from;
-            users[uid] = data.name;
-            init_userlist();
-        }else if (data.type == 'msg') {
-            var ntime = now.getHours() + ':' + now.getMinutes() + ':'
-                    + now.getSeconds();
-            if (data.to == '0') {
-                var txt = ntime + ': <span style="color:red">' + users[data.from]
-                        + '</span> 对 <span style="color:red">所有人</span> 说 : '
-                        + data.msg + '<br />';
-            } else {
-                var txt = ntime + '<span style="color:red">' + users[data.from]
-                        + '</span> 对你说 : ' + data.msg
-                        + '<br />';
-            }
-            sysinfo(txt);
-        }
+
+function sendMsg() {
+    if(!chatClient.connected){
+        alert('服务器没有连接');
+        return;
     }
 
-}
-/**
- * 初始化已有用户
- * 
- * @return
- */
-function init_userlist() {
-    var html = "<ul>";
-    for(var k in users) {
-        var name = users[k];
-        if(users[k] == uname) {
-            name = '你';
-        }
-        html += '<li id="'+k+'">'+name+'</li>';
+    var msgContent  = $.trim($("#msgContent").val());
+    if(msgContent == "") {
+        alert('请输入聊天内容');
+        $("#msgContent").focus();
+        return;
     }
-    html += '</ul>';
-    $("#pleft").html(html);
+
+    chatClient.send(JSON.stringify([6, {
+        uid:chatClient.uinfo.uid,
+        token: YL_SNS_CLIENT._config.token,
+        uname:chatClient.uinfo.username,
+        msg:msgContent
+    }]));
+    $("#msgContent").val('');
 }
-function sendmsg() {
-    var input = document.getElementById('msgcontent');
-    var msg = input.value;
-    socket.send(msg);
-    sysinfo('你说: '+msg+"<br/>");
-    input.value = '';
+
+chatClient.cb.connect = function(success, data) {
+    if(!success) {
+        console.log("error:"+data);
+        $("#chat_content").text('服务器连接失败');
+        if(chatClient.retry()) {
+            $("#chat_content").text('重连中');
+        } else {
+            hiddenChat("hiddenBtn", true);
+        }
+        return;
+    }
+    $("#chat_content").text('服务器连接成功');
+    $("#chat_content").text('正在初始化用户信息');
+    chatClient.socket.write(JSON.stringify([1, {
+        uid: YL_SNS_CLIENT._config.uid,
+        token: YL_SNS_CLIENT._config.token
+    }]));
 }
-function HTMLEnCode(str) {
-    var s = "";
-    if (str.length == 0)
-        return "";
-    s = str.replace(/&/g, "&gt;");
-    s = s.replace(/</g, "&lt;");
-    s = s.replace(/>/g, "&gt;");
-    s = s.replace(/    /g, "&nbsp;");
-    s = s.replace(/\'/g, "&#39;");
-    s = s.replace(/\"/g, "&quot;");
-    s = s.replace(/\n/g, "<br>");
-    return s;
+
+chatClient.cb.close = function() {
+    $("#chat_content").text('聊天服务器关闭中.');
+    hiddenChat("hiddenBtn", true);
+    $("#sendBtn").attr('disabled', 'disabled');
+    chatClient.connected = 0;
+    chatClient.clearhb();
 }
+
+chatClient.cb.receive = function (data) {
+    console.log('server:'+data);
+    data = JSON.parse(data);
+    switch (data[0]) {
+        case -1:
+            console.log("server error code:"+data[1]['code']+" msg:"+data[1]['msg']);
+            break;
+        case 2:     //
+            $("#chat_content").html('<p>欢迎ZCHAT</p>');
+            chatClient.uinfo = data[1];
+            chatClient.connected = 1;
+            $("#sendBtn").removeAttr('disabled');
+            chatClient.heartbeat(45);
+            break;
+        case 3:
+            $("#chat_content").text('初始化信息失败');
+            chatClient.socket.close();
+            $("#sendBtn").attr('disabled', 'disabled');
+            chatClient.connected = 0;
+            break;
+        case 4:   //重新登录
+            chatClient.socket.write(JSON.stringify([1, {
+                uid: YL_SNS_CLIENT._config.uid,
+                token: YL_SNS_CLIENT._config.token
+            }]));
+            break;
+        case 5:
+            $("#chat_content").text('帐号已在其它地方登录');
+            chatClient.selfClose();
+            break;
+        case 6:
+            $("#chat_content").append("<p>"+data[1]['uname']+"说："+data[1]['msg']+"</p>");
+            checkScroll();
+            break;
+        case 7:
+            console.log('hb upgrade success');
+            break;
+        case 8:
+            $("#chat_content").text('长时间没活动，断开链接！');
+            chatClient.selfClose();
+            break;
+        case 88:
+            $("#chat_content").append("<p>"+data[1]['username']+" "+data[1]['star']+"星 通过了关卡："+data[1]['sid']+"</p>");
+            checkScroll();
+            break;
+    }
+}
+
+jQuery(document).keypress(function(e){
+    if(e.ctrlKey && e.which == 13 || e.which == 10) {
+        jQuery("#sendBtn").click();
+    } else if (e.shiftKey && e.which==13 || e.which == 10) {
+        jQuery("#sendBtn").click();
+    }
+});

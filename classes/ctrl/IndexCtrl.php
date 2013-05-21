@@ -1,13 +1,41 @@
 <?php
+class IndexCtrl extends CtrlBase {
 
-namespace ctrl;
+	public function index() {
+		return DataView::getView('', 'html', 'index/index.php');
+	}
 
-class IndexCtrl 
-{
+	public function saveUser() {
+		$username = $this->getString($this->params, 'username');
+		$password = $this->getString($this->params, 'password');
+		$userService = common\ClassLocator::getService('User');
+		$userService->
+	}
 
-    public function index() {
+	public function login() {
+		$username = $this->getString($this->params, 'username');
+		$password = $this->getString($this->params, 'password');
+		$userService = common\ClassLocator::getService('User');
+		$token = $userService->checkLogin();
 
-        echo 'hello world';
-    }
+		if($token) {
+
+		}else{
+
+		}
+
+	}
+
+
+	public function getUser() {
+		$userId = $this->getInteger($this->params, 'uid');
+		$token = $this->getString($this->params, 'token');
+		$userService = common\ClassLocator::getService('User');
+		$userInfo = $this->fetchById($userId);
+		if($userInfo->token === $token) {
+			return DataView::getView($userInfo->getHash(), 'json');
+		}
+		throw new \Exception("token error");
+	}
 
 }

@@ -5,30 +5,31 @@ zchat
 
 @email: shenzhe163@gmail.com
 
-zchat 是用zphp实现的一个完整的聊天室demo
+zchat 是 基于 zphp实现的聊天室，着重于zphp在 socket, redis-storage, swoole相结合
 
+需求的扩展：
+=========
 
-要求 :
-========================
+1) swoole: https://github.com/matyhtf/php_swoole
 
-    php5.4+  
+2:redis-storage: http://github.com/shenzhe/redis-storage
 
-    libevent：http://pecl.php.net/package/libevent
+3: phpredis: http://github.com/shenzhe/phpredis
 
-    zphp: https://github.com/shenzhe/zphp
+运行：
+======
 
-    
-运行： 
-========================
+1) cd 程序目录
 
-    cd到 webroot目录
+2) php bin/sendbox.php   //flash sendbox实现
 
-    执行： php index.php Chat.start (可以加 -d ，以damon方式运行)
+3) php bin/socket.php    //相关业务逻辑
 
-    浏览器打开： http://host/chat.html
+4) 运行redis-storage
 
+5) webserver绑定域名到 webroot ，运行 http://host
 
-TODO： 
-========================
+配置：
+=====
+相关配置目录在inf/default
 
-	前后端的心跳包
