@@ -67,7 +67,7 @@ class main extends Base
         $service = common\loadClass::getService('User');
         $result = $service->addUser($username, $password, $icon);
         if($result) {
-            common\Utils::jump("main/main", "main", array(
+            return common\Utils::jump("main/main", "main", array(
                 "msg"=>"注册成功"
             ));
         }

@@ -10,7 +10,8 @@ $config =  array(
         'log_path' => 'http',
         'static_url' => '/static/',
         'tpl_path'=>'template'. DS .'zchat',
-        'view_mode'=> 'Json'
+        'view_mode'=> 'Json',
+        'app_host'=> $_SERVER['HTTP_HOST']
     ),
 );
 $publicConfig = array('pdo.php', 'cache.php', 'connection.php');

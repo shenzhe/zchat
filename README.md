@@ -7,6 +7,11 @@ zchat
 
 zchat 是 基于 zphp实现的聊天室，着重于zphp在 socket, redis, mysql, swoole相结合
 
+demo地址：
+========
+ http://zchat.45117.com
+ 
+
 需求的扩展：
 =========
 
