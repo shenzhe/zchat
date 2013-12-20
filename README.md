@@ -5,7 +5,7 @@ zchat
 
 @email: shenzhe163@gmail.com
 
-zchat 是 基于 zphp实现的聊天室，着重于zphp在 socket, redis-storage, swoole相结合
+zchat 是 基于 zphp实现的聊天室，着重于zphp在 socket, redis, mysql, swoole相结合
 
 需求的扩展：
 =========
@@ -21,15 +21,12 @@ zchat 是 基于 zphp实现的聊天室，着重于zphp在 socket, redis-storage
 
 1) cd 程序目录
 
-2) php bin/sendbox.php   //flash sendbox实现
+2) php zchat/webroot/main.php sendbox   //sendbox服务
 
-3) php bin/socket.php    //相关业务逻辑
+3) php zchat/webroot/main.php socket    //zchat socket服务
 
-4) 运行redis-storage
+4) 运行cache,conn两个redis服务
 
-5) webserver绑定域名到 webroot ，运行 http://host
+5) webserver绑定域名到 zchat/webroot ，运行 http://host
 
-配置：
-=====
-相关配置目录在inf/default
 
