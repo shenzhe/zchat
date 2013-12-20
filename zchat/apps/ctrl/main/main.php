@@ -4,9 +4,7 @@ namespace ctrl\main;
 
 use common,
     ctrl\Base,
-    ZPHP\Core\Config as ZConfig,
-    ZPHP\Storage\Factory as ZStorage,
-    ZPHP\Cache\Factory as ZCache;
+    ZPHP\Core\Config as ZConfig;
 
 class main extends Base
 {
@@ -22,6 +20,7 @@ class main extends Base
                 'uid'=>$uid,
                 'token'=>$token,
                 'static_url'=>ZConfig::getField('project', 'static_url'),
+                'app_host'=>ZConfig::getField('project', 'app_host'),
             );
         }
 

@@ -219,7 +219,6 @@ class Swoole implements ICallback
             $result =  Core\Route::route($server);
             return $result;
         } catch (\Exception $e) {
-            print_r($e);
             return null;
         }
     }

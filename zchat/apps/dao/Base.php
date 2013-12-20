@@ -2,13 +2,8 @@
 
 namespace dao;
 
-use dao,
-    common,
-    ZPHP\Core\Config as ZConfig,
-    ZPHP\Storage\Factory as ZStorage,
-    ZPHP\Serialize\Factory as ZSerialize,
-    ZPHP\Db\Pdo as ZPdo,
-    ZPHP\Cache\Factory as ZCache;
+use ZPHP\Core\Config as ZConfig,
+    ZPHP\Db\Pdo as ZPdo;
 
 abstract class Base
 {

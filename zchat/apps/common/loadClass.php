@@ -2,10 +2,7 @@
 
 namespace common;
 
-use ZPHP\Core\Factory,
-    ZPHP\Core\Config as ZConfig,
-    ZPHP\Rank\Factory as RFactory,
-    service\Pay\PayService;
+use ZPHP\Core\Factory;
 
 /**
  * 获取class实例的工具类
