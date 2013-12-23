@@ -102,11 +102,12 @@ class Swoole implements ICallback
                 $msg = \strip_tags($result[1][1]);
                 $uid = $this->getConnection()->getUid($fd);
                 if(empty($toId)) {  //公共聊天
-                    $this->sendToChannel($serv, self::CHAT, array($uid, $msg));
+                    $this->sendToChannel($serv, self::CHAT, array($uid, $msg, $toId));
                 } else { //私聊
                     $toInfo = $this->getConnection()->get($toId);
                     if(!empty($toInfo)) {
-                        $this->sendOne($serv, $toInfo['fd'], self::CHAT, array($uid, $msg));
+                        $this->sendOne($serv, $toInfo['fd'], self::CHAT, array($uid, $msg, $toId));
+                        $this->sendOne($serv, $fd, self::CHAT, array($uid, $msg, $toId));
                     }
                 }
                 break;

@@ -116,10 +116,14 @@ function sendMsg() {
         $("#msgContent").focus();
         return;
     }
-
+    var sendTo = parseInt($("#sendTo").val());
+    if(sendTo == chatClient.uinfo[0]) {
+        alert("不能和自己聊天～");
+        return ;
+    }
     chatClient.send([
         chatCMD.CHAT,
-        [0, msgContent]
+        [sendTo, msgContent]
     ]);
     $("#msgContent").val('');
 }
@@ -175,7 +179,15 @@ chatClient.cb.receive = function (data) {
             parseOl();
             break;
         case chatCMD.CHAT:
-            $("#chat_content").append('<p>' + chatClient.olList[data[1][0]][1] + ' 说： ' + data[1][1] +'</p>');
+            if(data[1][2] < 1) {
+                $("#chat_content").append('<p>' + chatClient.olList[data[1][0]][1] + ' 对 大家 说： ' + data[1][1] +'</p>');
+            } else {
+                if(data[1][0] == chatClient.uinfo[0]) {
+                    $("#chat_content").append('<p> 你 对 ' + chatClient.olList[data[1][2]][1] + ' 说： ' + data[1][1] +'</p>');
+                } else {
+                    $("#chat_content").append('<p>' + chatClient.olList[data[1][0]][1] + ' 对 你 说： ' + data[1][1] +'</p>');
+                }
+            }
             break;
         case chatCMD.LOGINOUT:
             $("#chat_content").append('<p>'+chatClient.olList[data[1][0]][1]+' 退出了聊天室！</p>');
@@ -187,8 +199,12 @@ chatClient.cb.receive = function (data) {
 
 function parseOl() {
     var html = '';
+    var select = $("#sendTo");
     for(var key in chatClient.olList) {
-        html += '<p id="ol_'+key+'">'+chatClient.olList[key][1]+'</p>';
+        if(key != chatClient.uinfo[0]) {
+            html += '<p id="ol_'+key+'">'+chatClient.olList[key][1]+'</p>';
+        }
+        select.append('<option value="'+key+'">'+chatClient.olList[key][1]+'</option>');
     }
     $('#ollist').html(html);
 }

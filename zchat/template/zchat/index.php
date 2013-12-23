@@ -25,6 +25,9 @@
     <div class="chat_send">
         <div class="col-lg-6">
             <div class="input-group">
+                <select class="form-control" id="sendTo">
+                    <option value="0">全体</option>
+                </select>
                 <input type="text" id="msgContent" class="form-control">
       <span class="input-group-btn">
         <button class="btn btn-default" type="button" id="sendBtn" onclick="sendMsg()">发言</button>
