@@ -62,9 +62,18 @@ class Utils
 
     public static function makeUrl($action, $method, $params=array())
     {
-        $appUrl = ZConfig::getField('project', 'app_host', "/");
+        $appUrl = ZConfig::getField('project', 'app_host', "");
         $actionName = ZConfig::getField('project', 'action_name', 'a');
         $methodName = ZConfig::getField('project', 'method_name', 'm');
+        if(empty($appUrl)) {
+            $appUrl = '/';
+        } else {
+            if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") {
+                $appUrl = 'https://'.$appUrl;
+            } else {
+                $appUrl = 'http://'.$appUrl;
+            }
+        }
         return $appUrl."?{$actionName}={$action}&{$methodName}={$method}&".http_build_query($params);
     }
 
