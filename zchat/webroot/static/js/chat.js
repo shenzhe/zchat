@@ -199,13 +199,15 @@ chatClient.cb.receive = function (data) {
 
 function parseOl() {
     var html = '';
-    var select = $("#sendTo");
+    var shtml = '<option value="0">所有人</option>';
     for(var key in chatClient.olList) {
         if(key != chatClient.uinfo[0]) {
-            html += '<p id="ol_'+key+'">'+chatClient.olList[key][1]+'</p>';
+            shtml += '<option value="'+key+'">'+chatClient.olList[key][1]+'</option>';
         }
-        select.append('<option value="'+key+'">'+chatClient.olList[key][1]+'</option>');
+        html += '<p id="ol_'+key+'">'+chatClient.olList[key][1]+'</p>';
+
     }
+    $("#sendTo").html(shtml);
     $('#ollist').html(html);
 }
 
