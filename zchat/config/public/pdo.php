@@ -7,5 +7,6 @@
             'pass' => '123456',
             'dbname' => 'zchat',
             'charset' => 'UTF8',
+            'pconnect'=>true,
         )
     );
